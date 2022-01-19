@@ -1,8 +1,8 @@
 package com.game.repository;
 
 import com.game.entity.Player;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.QueryByExampleExecutor;
 
-public interface PlayersRepository extends CrudRepository<Player, Long>, QueryByExampleExecutor<Player> {
+public interface PlayersRepository extends CrudRepository<Player, Long>, JpaSpecificationExecutor<Player> {
 }
