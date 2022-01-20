@@ -7,7 +7,6 @@ import com.game.service.PlayersJPACriteriaBuilder;
 import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.DataBinder;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -56,7 +55,7 @@ public class RestPlayersController {
     }
 
     @PostMapping("/players")
-    public Player createPlayer(@Validated @RequestBody Player player) {
+    public Player createPlayer(@RequestBody Player player) {
 
         DataBinder dataBinder = new DataBinder(player);
         dataBinder.addValidators(new PlayerValidator());
@@ -66,5 +65,55 @@ public class RestPlayersController {
         }
 
         return playersRepository.save(player);
+    }
+
+    @PostMapping("/players/{id}")
+    public Player updatePlayer(@PathVariable Long id, @RequestBody Player newPlayer) {
+        Optional<Player> currentPlayerOptional = playersRepository.findById(id);
+        if (currentPlayerOptional.isPresent()) {
+            Player currentPlayer = currentPlayerOptional.get();
+            if (newPlayer.getName() != null) {
+                currentPlayer.setName(newPlayer.getName());
+            }
+            if (newPlayer.getTitle() != null) {
+                currentPlayer.setTitle(newPlayer.getTitle());
+            }
+            if (newPlayer.getProfession() != null) {
+                currentPlayer.setProfession(newPlayer.getProfession());
+            }
+            if (newPlayer.getRace() != null) {
+                currentPlayer.setRace(newPlayer.getRace());
+            }
+            if (newPlayer.getBirthday() != null) {
+                currentPlayer.setBirthday(newPlayer.getBirthday());
+            }
+            if (newPlayer.getExperience() != null) {
+                currentPlayer.setExperience(newPlayer.getExperience());
+            }
+            if (newPlayer.isBanned()) {
+                currentPlayer.setBanned(true);
+            }
+
+            DataBinder dataBinder = new DataBinder(currentPlayer);
+            dataBinder.addValidators(new PlayerValidator());
+            dataBinder.validate();
+            if (dataBinder.getBindingResult().hasErrors()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            }
+
+            return playersRepository.save(currentPlayer);
+
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping("players/{id}")
+    public void deletePlayer(@PathVariable Long id) {
+        if (playersRepository.existsById(id)) {
+            playersRepository.deleteById(id);
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
     }
 }
