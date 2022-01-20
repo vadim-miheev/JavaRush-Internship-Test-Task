@@ -7,7 +7,7 @@ import java.sql.Date;
 @Table(name="player")
 public class Player {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "name")
@@ -101,21 +101,21 @@ public class Player {
 
     public void setExperience(Integer experience) {
         this.experience = experience;
+        updateLevel();
     }
 
     public Integer getLevel() {
         return level;
     }
 
-    public void setLevel(Integer level) {
-        this.level = level;
-    }
-
     public Integer getUntilNextLevel() {
         return untilNextLevel;
     }
 
-    public void setUntilNextLevel(Integer untilNextLevel) {
-        this.untilNextLevel = untilNextLevel;
+    private void updateLevel() {
+        if (this.getExperience() != null && this.getExperience() >= 0 && this.getExperience() <= 10_000_000) {
+            this.level = (int)((Math.sqrt(this.getExperience() * 200 + 2500) - 50) / 100);
+            this.untilNextLevel = (50 * (this.level + 1) * (this.level + 2)) - this.getExperience();
+        }
     }
 }

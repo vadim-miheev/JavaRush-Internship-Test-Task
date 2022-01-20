@@ -2,13 +2,13 @@ package com.game.controller;
 
 import com.game.entity.Player;
 import com.game.repository.PlayersRepository;
+import com.game.service.PlayerValidator;
 import com.game.service.PlayersJPACriteriaBuilder;
 import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.DataBinder;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -53,5 +53,18 @@ public class RestPlayersController {
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
+    }
+
+    @PostMapping("/players")
+    public Player createPlayer(@Validated @RequestBody Player player) {
+
+        DataBinder dataBinder = new DataBinder(player);
+        dataBinder.addValidators(new PlayerValidator());
+        dataBinder.validate();
+        if (dataBinder.getBindingResult().hasErrors()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+
+        return playersRepository.save(player);
     }
 }
