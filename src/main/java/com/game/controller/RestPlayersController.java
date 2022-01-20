@@ -69,6 +69,10 @@ public class RestPlayersController {
 
     @PostMapping("/players/{id}")
     public Player updatePlayer(@PathVariable Long id, @RequestBody Player newPlayer) {
+        if (id < 1) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+
         Optional<Player> currentPlayerOptional = playersRepository.findById(id);
         if (currentPlayerOptional.isPresent()) {
             Player currentPlayer = currentPlayerOptional.get();
@@ -110,6 +114,10 @@ public class RestPlayersController {
 
     @DeleteMapping("players/{id}")
     public void deletePlayer(@PathVariable Long id) {
+        if (id < 1) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+
         if (playersRepository.existsById(id)) {
             playersRepository.deleteById(id);
         } else {
