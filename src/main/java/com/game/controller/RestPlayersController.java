@@ -1,6 +1,8 @@
 package com.game.controller;
 
 import com.game.entity.Player;
+import com.game.entity.Profession;
+import com.game.entity.Race;
 import com.game.repository.PlayersRepository;
 import com.game.service.PlayerValidator;
 import com.game.service.PlayersJPACriteriaBuilder;
@@ -11,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Date;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -68,7 +72,7 @@ public class RestPlayersController {
     }
 
     @PostMapping("/players/{id}")
-    public Player updatePlayer(@PathVariable Long id, @RequestBody Player newPlayer) {
+    public Player updatePlayer(@PathVariable Long id, @RequestBody Map<String,String> allParams) {
         if (id < 1) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
@@ -76,26 +80,26 @@ public class RestPlayersController {
         Optional<Player> currentPlayerOptional = playersRepository.findById(id);
         if (currentPlayerOptional.isPresent()) {
             Player currentPlayer = currentPlayerOptional.get();
-            if (newPlayer.getName() != null) {
-                currentPlayer.setName(newPlayer.getName());
+            if (allParams.get("name") != null) {
+                currentPlayer.setName(allParams.get("name"));
             }
-            if (newPlayer.getTitle() != null) {
-                currentPlayer.setTitle(newPlayer.getTitle());
+            if (allParams.get("title") != null) {
+                currentPlayer.setTitle(allParams.get("title"));
             }
-            if (newPlayer.getProfession() != null) {
-                currentPlayer.setProfession(newPlayer.getProfession());
+            if (allParams.get("profession") != null) {
+                currentPlayer.setProfession(Profession.valueOf(allParams.get("profession")));
             }
-            if (newPlayer.getRace() != null) {
-                currentPlayer.setRace(newPlayer.getRace());
+            if (allParams.get("race") != null) {
+                currentPlayer.setRace(Race.valueOf(allParams.get("race")));
             }
-            if (newPlayer.getBirthday() != null) {
-                currentPlayer.setBirthday(newPlayer.getBirthday());
+            if (allParams.get("birthday") != null) {
+                currentPlayer.setBirthday(new Date(Long.parseLong(allParams.get("birthday"))));
             }
-            if (newPlayer.getExperience() != null) {
-                currentPlayer.setExperience(newPlayer.getExperience());
+            if (allParams.get("experience") != null) {
+                currentPlayer.setExperience(Integer.parseInt(allParams.get("experience")));
             }
-            if (newPlayer.isBanned()) {
-                currentPlayer.setBanned(true);
+            if (allParams.get("banned") != null) {
+                    currentPlayer.setBanned(Boolean.parseBoolean(allParams.get("banned")));
             }
 
             DataBinder dataBinder = new DataBinder(currentPlayer);
