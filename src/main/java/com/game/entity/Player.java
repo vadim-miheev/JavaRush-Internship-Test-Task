@@ -112,7 +112,7 @@ public class Player {
         return untilNextLevel;
     }
 
-    private void updateLevel() {
+    public void updateLevel() {
         if (this.getExperience() != null && this.getExperience() >= 0 && this.getExperience() <= 10_000_000) {
             this.level = (int)((Math.sqrt(this.getExperience() * 200 + 2500) - 50) / 100);
             this.untilNextLevel = (50 * (this.level + 1) * (this.level + 2)) - this.getExperience();

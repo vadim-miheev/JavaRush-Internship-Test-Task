@@ -56,7 +56,7 @@ public class RestPlayersController {
 
     @PostMapping("/players")
     public Player createPlayer(@RequestBody Player player) {
-
+        player.updateLevel();
         DataBinder dataBinder = new DataBinder(player);
         dataBinder.addValidators(new PlayerValidator());
         dataBinder.validate();
