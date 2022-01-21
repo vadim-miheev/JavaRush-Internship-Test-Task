@@ -90,6 +90,11 @@ public class PlayersJPACriteriaBuilder {
             addToCurrent((root, query, builder) -> builder.isTrue(root.get("banned")));
         }
 
+        // Filters by Ban
+        if ("false".equals(request.getParameter("banned"))) {
+            addToCurrent((root, query, builder) -> builder.isFalse(root.get("banned")));
+        }
+
         return currentSpecification;
     }
 
